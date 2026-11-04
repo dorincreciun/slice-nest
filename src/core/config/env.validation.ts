@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import {IsEnum, IsInt, IsUrl, Max, Min, validateSync} from 'class-validator';
+import { IsEnum, IsInt, IsUrl, Max, Min, validateSync } from 'class-validator';
 
 enum Environment {
   Development = 'development',
