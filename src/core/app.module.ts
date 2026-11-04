@@ -10,6 +10,7 @@ import { validate } from './config/env.validation.js';
       isGlobal: true,
       cache: true,
       validate,
+      expandVariables: true
     }),
   ],
   controllers: [AppController],
