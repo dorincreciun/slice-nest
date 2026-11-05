@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './core/app.module.js';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { EnvironmentVariables } from './core/config/env.validation.js';
 
@@ -16,6 +16,11 @@ async function bootstrap() {
   const config =
     app.get<ConfigService<EnvironmentVariables, true>>(ConfigService);
 
+  app.setGlobalPrefix('api');
+  app.enableVersioning({
+    defaultVersion: '1',
+    type: VersioningType.URI,
+  });
   app.enableShutdownHooks();
   await app.listen(config.get('PORT', { infer: true }));
 }
