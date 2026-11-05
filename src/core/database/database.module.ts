@@ -1,62 +1,32 @@
-import {
-  Global,
-  Inject,
-  Logger,
-  Module,
-  type OnApplicationShutdown,
-  type OnModuleInit,
-  type Provider,
-} from '@nestjs/common';
+import { Global, Logger, Module, OnModuleInit } from '@nestjs/common';
+import { DrizzleModule, InjectDrizzle } from '@nestjs/drizzle';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { ConfigService } from '@nestjs/config';
-import { Pool } from 'pg';
-import { DATABASE_CLIENT } from './database.constants.js';
-import { EnvironmentVariables } from '../config/env.validation.js';
-
-const databaseProvider: Provider = {
-  provide: DATABASE_CLIENT,
-  inject: [ConfigService],
-  useFactory: (config: ConfigService<EnvironmentVariables, true>): Pool => {
-    const pool = new Pool({
-      connectionString: config.get('DATABASE_URL', { infer: true }),
-    });
-
-    const logger = new Logger('DatabasePool');
-    pool.on('error', (error) => {
-      logger.error(`Idle client error: ${error.message}`);
-    });
-
-    return pool;
-  },
-};
+import type { EnvironmentVariables } from '../config/env.validation.js';
+import { type Database, relations } from './relations.js';
+import { sql } from 'drizzle-orm';
 
 @Global()
 @Module({
-  providers: [databaseProvider],
-  exports: [DATABASE_CLIENT],
+  imports: [
+    DrizzleModule.forRootAsync({
+      useFactory: (config: ConfigService<EnvironmentVariables, true>) => ({
+        drizzle,
+        connection: config.get('DATABASE_URL', { infer: true }),
+        relations,
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+  exports: [DrizzleModule],
 })
-export class DatabaseModule implements OnModuleInit, OnApplicationShutdown {
-  private readonly logger = new Logger(DatabaseModule.name);
-
-  constructor(@Inject(DATABASE_CLIENT) private readonly pool: Pool) {}
-
-  async onModuleInit(): Promise<void> {
-    try {
-      const result = await this.pool.query<{ server_version: string }>(
-        'SHOW server_version',
-      );
-      this.logger.log(
-        `Connected to PostgreSQL ${result.rows[0]?.server_version ?? ''}`,
-      );
-    } catch (error) {
-      throw new Error(
-        'Cannot connect to PostgreSQL. Is the container running? Check DATABASE_URL.',
-        { cause: error },
-      );
-    }
-  }
-
-  async onApplicationShutdown(): Promise<void> {
-    await this.pool.end();
-    this.logger.log('PostgreSQL pool closed');
+export class DatabaseModule implements OnModuleInit {
+  constructor(
+    @InjectDrizzle()
+    private readonly db: Database,
+  ) {}
+  async onModuleInit() {
+    await this.db.execute(sql`select 1`);
+    new Logger('Database').log('Connected');
   }
 }

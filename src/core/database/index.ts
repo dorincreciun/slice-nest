@@ -1,2 +1,2 @@
-export { DATABASE_CLIENT } from './database.constants.js';
 export { DatabaseModule } from './database.module.js';
+export type { Database } from './relations.js';
