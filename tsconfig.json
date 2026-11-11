@@ -14,11 +14,6 @@
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": ".",
-    "paths": {
-      "@core/*": ["./src/core/*"],
-      "@common/*": ["./src/common/*"],
-      "@modules/*": ["./src/modules/*"]
-    },
     "incremental": true,
     "skipLibCheck": true,
     "strict": true,
