@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { DrizzleModule, InjectDrizzle } from '@nestjs/drizzle';
 import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import type { EnvironmentVariables } from '../config/env.validation.js';
-import { type Database, relations } from './relations.js';
+import type { EnvironmentVariables } from '../config/env.validation';
+import { type Database, relations } from './relations';
 
 @Global()
 @Module({

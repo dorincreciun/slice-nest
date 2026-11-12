@@ -1,5 +1,5 @@
 import { defineRelations } from 'drizzle-orm';
-import * as schema from './schema/index.js';
+import * as schema from './schema/index';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 export const relations = defineRelations(schema);

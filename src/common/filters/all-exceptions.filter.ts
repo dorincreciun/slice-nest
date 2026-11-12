@@ -7,13 +7,13 @@ import {
   Logger,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { ErrorResponse } from '../types/error-response.type.js';
+import type { ErrorResponse } from '../types/error-response.type';
 
 @Catch()
-export class HttpExceptionFilter implements ExceptionFilter {
-  logger = new Logger(HttpExceptionFilter.name);
+export class AllExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new Logger(AllExceptionsFilter.name);
 
-  catch(exception: unknown, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest<Request>();
     const response = ctx.getResponse<Response<ErrorResponse>>();
@@ -27,7 +27,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     response.status(statusCode).json({
       statusCode,
-      code: HttpStatus[statusCode],
+      code: HttpStatus[statusCode] ?? 'UNKNOWN_ERROR',
       message,
       details: null,
       meta: {
@@ -38,7 +38,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
   }
 
   private resolveExceptionStatus(exception: unknown): number {
-    return exception instanceof HttpException ? exception.getStatus() : 500;
+    return exception instanceof HttpException
+      ? exception.getStatus()
+      : HttpStatus.INTERNAL_SERVER_ERROR;
   }
 
   private resolveExceptionMessage(exception: unknown): string {
