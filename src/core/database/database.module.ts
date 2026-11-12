@@ -2,8 +2,8 @@ import { Global, Logger, Module, OnModuleInit } from '@nestjs/common';
 import { DrizzleModule, InjectDrizzle } from '@nestjs/drizzle';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { ConfigService } from '@nestjs/config';
-import type { EnvironmentVariables } from '../config/env.validation.js';
-import { type Database, relations } from './relations.js';
+import type { EnvironmentVariables } from '../config/env.validation';
+import { type Database, relations } from './relations';
 import { sql } from 'drizzle-orm';
 
 @Global()

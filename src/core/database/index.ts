@@ -1,2 +1,2 @@
-export { DatabaseModule } from './database.module.js';
-export type { Database } from './relations.js';
+export { DatabaseModule } from './database.module';
+export type { Database } from './relations';

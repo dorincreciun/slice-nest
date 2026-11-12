@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { validate } from './config/env.validation.js';
-import { DatabaseModule } from './database/index.js';
-import { HealthModule } from './health/health.module.js';
+import { validate } from './config/env.validation';
+import { DatabaseModule } from './database/index';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [

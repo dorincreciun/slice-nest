@@ -1,6 +1,6 @@
 import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
-import { DrizzleHealthIndicator } from './drizzle.health.js';
+import { DrizzleHealthIndicator } from './drizzle.health';
 
 @Controller({
   path: 'health',
