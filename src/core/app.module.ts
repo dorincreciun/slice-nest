@@ -3,8 +3,8 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from './config/env.validation.js';
-import { DatabaseModule } from './database';
-import { HealthModule } from './health/health.module';
+import { DatabaseModule } from './database/index.js';
+import { HealthModule } from './health/health.module.js';
 
 @Module({
   imports: [
