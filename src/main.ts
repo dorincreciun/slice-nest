@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './core/app.module.js';
+import { AppModule } from './core/app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { EnvironmentVariables } from './core/config/env.validation.js';
-import { HttpExceptionFilter } from './common/filters/all-exceptions.filter.js';
+import type { EnvironmentVariables } from './core/config/env.validation';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,7 +14,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new AllExceptionsFilter());
   const config =
     app.get<ConfigService<EnvironmentVariables, true>>(ConfigService);
 
