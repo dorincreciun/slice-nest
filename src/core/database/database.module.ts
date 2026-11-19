@@ -1,34 +1,39 @@
-import { Global, Logger, Module, type OnModuleInit } from '@nestjs/common';
+import {
+  Global,
+  Inject,
+  Logger,
+  Module,
+  type Provider,
+  type OnApplicationShutdown,
+  type OnModuleInit,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DrizzleModule, InjectDrizzle } from '@nestjs/drizzle';
-import { sql } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
 import type { EnvironmentVariables } from '../config/env.validation';
-import { type Database, relations } from './relations';
+import { PG_POOL } from './database.constants';
+
+const poolProvider: Provider = {
+  provide: PG_POOL,
+  useFactory: (config: ConfigService<EnvironmentVariables, true>) =>
+    new Pool({
+      connectionString: config.get('DATABASE_URL', { infer: true }),
+    }),
+  inject: [ConfigService],
+};
 
 @Global()
 @Module({
-  imports: [
-    DrizzleModule.forRootAsync({
-      useFactory: (config: ConfigService<EnvironmentVariables, true>) => ({
-        drizzle,
-        connection: config.get('DATABASE_URL', { infer: true }),
-        relations,
-      }),
-      inject: [ConfigService],
-    }),
-  ],
-  exports: [DrizzleModule],
+  providers: [poolProvider],
+  exports: [PG_POOL],
 })
-export class DatabaseModule implements OnModuleInit {
+export class DatabaseModule implements OnModuleInit, OnApplicationShutdown {
   private readonly logger = new Logger(DatabaseModule.name);
 
-  constructor(@InjectDrizzle() private readonly db: Database) {}
+  constructor(@Inject(PG_POOL) private readonly pool: Pool) {}
 
-  // fail-fast: @nestjs/drizzle nu verifică singur conexiunea la pornire
   async onModuleInit(): Promise<void> {
     try {
-      await this.db.execute(sql`select 1`);
+      await this.pool.query('select 1');
       this.logger.log('Connected to PostgreSQL');
     } catch (error) {
       throw new Error(
@@ -36,5 +41,9 @@ export class DatabaseModule implements OnModuleInit {
         { cause: error },
       );
     }
+  }
+
+  async onApplicationShutdown(): Promise<void> {
+    await this.pool.end();
   }
 }

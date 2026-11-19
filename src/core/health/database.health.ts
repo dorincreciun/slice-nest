@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { HealthIndicatorService } from '@nestjs/terminus';
-import { InjectDrizzle } from '@nestjs/drizzle';
-import type { Database } from '../database/index';
-import { sql } from 'drizzle-orm';
+import { type Database, InjectDatabase } from '../database/index';
 
 @Injectable()
-export class DrizzleHealthIndicator {
+export class DatabaseHealthIndicator {
   constructor(
-    @InjectDrizzle()
-    private readonly db: Database,
+    @InjectDatabase() private readonly db: Database,
     private readonly indicator: HealthIndicatorService,
   ) {}
 
@@ -16,7 +13,7 @@ export class DrizzleHealthIndicator {
     return this.indicator
       .check(key)
       .attempt(async () => {
-        await this.db.execute(sql`select 1`);
+        await this.db.query('select 1');
       })
       .withTimeout(1000);
   }
