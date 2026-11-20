@@ -22,7 +22,8 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
     "typecheck": "tsc --noEmit",
     "db:migrate": "node scripts/migrate.mjs",
-    "db:new": "node scripts/migrate.mjs new"
+    "db:new": "node scripts/migrate.mjs new",
+    "format:sql": "find src/core/database/migrations -name '*.sql' -print0 | xargs -0 -n1 sql-formatter --fix -c .sql-formatter.json"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
@@ -53,6 +54,7 @@
     "oxlint": "^1.58.0",
     "prettier": "^3.4.2",
     "source-map-support": "^0.5.21",
+    "sql-formatter": "^15.9.1",
     "supertest": "^7.0.0",
     "typescript": "^6.0.2",
     "vite-tsconfig-paths": "^5.1.4",

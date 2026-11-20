@@ -1,0 +1,9 @@
+{
+  "language": "postgresql",
+  "tabWidth": 2,
+  "keywordCase": "upper",
+  "dataTypeCase": "lower",
+  "functionCase": "lower",
+  "indentStyle": "standard",
+  "linesBetweenQueries": 1
+}
