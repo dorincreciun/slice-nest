@@ -14,7 +14,7 @@ import pg from 'pg';
 expand(config({ quiet: true }));
 
 const dir = fileURLToPath(
-  new URL('../src/core/database/migrations/', import.meta.url),
+  new URL('../migrations/', import.meta.url),
 );
 const [cmd, arg] = process.argv.slice(2);
 
