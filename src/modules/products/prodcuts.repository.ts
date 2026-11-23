@@ -1,14 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { PG_POOL } from '../../core/database';
-import type { Pool } from 'pg';
+import { Injectable } from '@nestjs/common';
+import { InjectDatabase, DatabaseService } from '../../core/database';
 import { Product, ProductRow } from './types';
 import { toProduct } from './product.mapper';
 
 @Injectable()
 export class ProductsRepository {
   constructor(
-    @Inject(PG_POOL)
-    private readonly db: Pool,
+    @InjectDatabase()
+    private readonly db: DatabaseService,
   ) {}
 
   async findAll(locale = 'ru'): Promise<Product[]> {
@@ -28,7 +27,7 @@ export class ProductsRepository {
       WHERE p.deleted_at IS NULL
       ORDER BY t.name;
     `;
-    const { rows } = await this.db.query<ProductRow>(sql, [locale]);
-    return rows[0].map(toProduct);
+    const products = await this.db.many<ProductRow>(sql, [locale]);
+    return products.map(toProduct);
   }
 }
