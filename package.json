@@ -23,6 +23,7 @@
     "typecheck": "tsc --noEmit",
     "db:migrate": "node scripts/migrate.mjs",
     "db:new": "node scripts/migrate.mjs new",
+    "db:seed": "node scripts/seed.mjs",
     "format:sql": "find src/core/database/migrations -name '*.sql' -print0 | xargs -0 -n1 sql-formatter --fix -c .sql-formatter.json"
   },
   "dependencies": {
