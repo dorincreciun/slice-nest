@@ -7,13 +7,10 @@
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {
-    "build": "nest build",
-    "deploy": "nest deploy",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
     "lint": "oxlint src/ test/",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -21,8 +18,9 @@
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
     "typecheck": "tsc --noEmit",
-    "db:migrate": "node scripts/migrate.mjs",
-    "db:new": "node scripts/migrate.mjs new",
+    "db:migrate": "node src/core/database/cli/migrate.mjs",
+    "db:seed": "node src/core/database/cli/seed.mjs",
+    "db:new": "node src/core/database/cli/migrate.mjs new",
     "format:sql": "find src/core/database/migrations -name '*.sql' -print0 | xargs -0 -n1 sql-formatter --fix -c .sql-formatter.json"
   },
   "dependencies": {
@@ -39,7 +37,6 @@
   },
   "devDependencies": {
     "@nestjs/cli": "^12.0.0",
-    "@nestjs/mau": "^0.2.6",
     "@nestjs/schematics": "^12.0.0",
     "@nestjs/testing": "^12.0.1",
     "@swc/cli": "^0.8.2",
