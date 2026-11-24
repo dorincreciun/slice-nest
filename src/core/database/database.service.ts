@@ -5,7 +5,7 @@ import {
   type OnApplicationShutdown,
   type OnModuleInit,
 } from '@nestjs/common';
-import { Pool, type QueryResult, type QueryResultRow } from 'pg';
+import { Pool, PoolClient, type QueryResult, type QueryResultRow } from 'pg';
 import { PG_POOL } from './database.constants';
 
 /**
@@ -84,6 +84,23 @@ export class DatabaseService implements OnModuleInit, OnApplicationShutdown {
       throw new Error(`Expected exactly 1 row, got ${rows.length}`);
     }
     return row;
+  }
+
+  public async transaction<T>(
+    callback: (client: PoolClient) => Promise<T>,
+  ): Promise<T> {
+    const client = await this.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const result = await callback(client);
+      await client.query('COMMIT');
+      return result;
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
+    }
   }
 
   /**

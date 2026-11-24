@@ -1,17 +1,9 @@
-export type ProductRow = {
-  id: number;
-  slug: string;
-  price_cents: number;
-  image_url: string | null;
-  name: string;
-  description: string | null;
-};
+import { ProductsTable, ProductTranslationsTable } from './table.type';
 
-export type Product = {
-  id: number;
-  slug: string;
-  price_cents: number;
-  image_url: string | null;
-  name: string;
-  description: string | null;
-};
+export type ProductRow = Pick<
+  ProductsTable,
+  'id' | 'slug' | 'price_cents' | 'image_url' | 'is_available'
+> &
+  Pick<ProductTranslationsTable, 'name' | 'description'>;
+
+export interface Product extends ProductRow {}
