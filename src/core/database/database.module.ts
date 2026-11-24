@@ -17,6 +17,6 @@ const poolProvider: Provider = {
 @Global()
 @Module({
   providers: [poolProvider, DatabaseService],
-  exports: [DatabaseService],
+  exports: [poolProvider, DatabaseService],
 })
 export class DatabaseModule {}

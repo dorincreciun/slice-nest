@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { InjectDatabase, DatabaseService } from '../../core/database';
+import { Inject, Injectable } from '@nestjs/common';
+import { DatabaseService } from '../../core/database';
 import { Product, ProductRow, ProductsTable } from './types';
 import { toProduct } from './product.mapper';
 import { CreateProductDto } from './dto';
@@ -7,7 +7,7 @@ import { CreateProductDto } from './dto';
 @Injectable()
 export class ProductsRepository {
   public constructor(
-    @InjectDatabase()
+    @Inject(DatabaseService)
     private readonly db: DatabaseService,
   ) {}
 
