@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../../core/database';
 import { Product, ProductRow, ProductsTable } from './types';
 import { toProduct } from './product.mapper';
@@ -10,6 +10,7 @@ export class ProductsRepository {
     @Inject(DatabaseService)
     private readonly db: DatabaseService,
   ) {}
+
 
   public async findAll(locale = 'ru'): Promise<Product[]> {
     const sql = `
@@ -52,7 +53,10 @@ export class ProductsRepository {
       WHERE p.deleted_at IS NULL AND p.slug = $1;
     `;
     const product = await this.db.oneOrNone<ProductRow>(sql, [slug, locale]);
-    return product ? toProduct(product) : null;
+    if (!product) {
+      throw new NotFoundException('Produsul cu acest slug nu a fost gasit');
+    }
+    return toProduct(product);
   }
 
   public async findById(id: number, locale = 'ru'): Promise<Product | null> {
